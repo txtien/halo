@@ -4,7 +4,7 @@
 <div class="container">
     <div class="question-detail">
         <div class="votes-count">
-            <a href=""><span class="upvote"><i class="fas fa-sort-up"></i></span></a>
+            <a href=""><span class="upvote" data-id="{{user.id}}" data-action="upvote"><i class="fas fa-sort-up"></i></span></a>
             {{question.votes}}
             <a href=""><span class="downvote"><i class="fas fa-sort-down"></i></span></a>
         </div>
@@ -59,4 +59,18 @@
     {% endif %}
 </div>
 
+{% endblock %}
+
+{% block script %}
+{%block domready %}
+    $('span.upvote').click(function(e) {
+        e.preventDefault()
+        $.post("{% url 'qa:vote' %}", {id: $(this).data('id'),
+        action: $(this).data('action')}, function(data) {
+            if (data['status'] == 'ok') {
+                alert('ok')
+            }
+        })
+    })
+{% endblock %}
 {% endblock %}

@@ -6,6 +6,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Question, Answer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from halo.common.decorators import ajax_required
+
 
 
 # Create your views here.
@@ -70,3 +74,10 @@ def register(request):
 @login_required
 def logged_in(request):
     return render(request, 'extends/dashboard.html')
+
+@ajax_required
+@require_POST
+@login_required
+def vote(request):
+    print(request.POST)
+    return JsonResponse({'status':'ok'})

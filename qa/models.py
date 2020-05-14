@@ -1,4 +1,5 @@
 from django.db import models
+from vote.models import VoteModel
 from django.contrib.auth.models import User
 from django.urls import reverse
 

@@ -4,7 +4,7 @@
 <p class="content-title">All Questions</p>
 <div class="questions">
     {% for question in questions %}
-    <div class="question gray">
+    <div class="question">
         <div class="question-content">
             <a href="{{question.get_absolute_url}}"><h4>{{question.title}}</h4></a>
             <p>{{question.body|truncatewords:30}}</p>

@@ -65,6 +65,10 @@ a.tag {
   font-size: 12px;
 }
 
+.container {
+  margin-top: 20px;
+  margin-left: 20px; 
+}
 
 /* HEADER */
 
@@ -252,24 +256,42 @@ a.tag {
 }
 
 /* ANSWER */
-.question-detail {
-  margin-top: 20px;
+.question-detail, .answer-detail {
+  display: flex;
+}
+
+.question-content, .answer-content {
   margin-left: 20px;
+}
+
+.votes-count {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  text-align: center;
+}
+
+.question-detail .votes-count i {
+  font-size: 1.5rem;
 }
 
 .question-detail .question-body {
   border-bottom: 1px solid #dadfea;
 }
 
+.question-detail .question-title {
+  display: inline-block;
+}
+
 .answers-block h4 {
   border-bottom: 1px solid #dadfea;
 }
 
-.answers .answer:nth-child(2n + 1) {
+.answers .answer-detail:nth-child(2n + 1) {
   background-color: #fbfcff;
 }
 
-.answer-form p input[type=submit] {
+.answer-form p input[type="submit"] {
   height: 45px;
   border: none;
   color: #fff;

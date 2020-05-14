@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/f5f81da170.js" crossorigin="anonymous"></script>
+    <title>QA</title>
+</head>
+<body>
+    <header id='header'>
+        <div class="logo-img">
+            <a href="{% url 'home' %}" >
+                <img src="{% static 'img/logo.png' %}" alt="logo">
+            </a>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Enter Keywords">
+            <i class="fas fa-search"></i>
+        </div>
+        <div class="navigation">
+            <ul>
+                {% if request.user.is_authenticated %}
+                <li style="color: #15A4FA">Hello {{request.user.first_name}}</li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% else %}
+                <li><a href="{% url 'login' %}">Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+    <section id="main-content">
+        <aside id="left-sidebar">
+            <ul>
+                <li class="btn">
+                    <button class="ask-question"><i class="fas fa-plus"></i> ASK A QUESTION</button>
+                </li>
+                <li class="tags">
+                    <a class="tag" href="">business</a>
+                    <a class="tag" href="">technology</a>
+                    <a class="tag" href="">business</a>
+                    <a class="tag" href="">technology</a>
+                    <a class="tag" href="">business</a>
+                    <a class="tag" href="">technology</a>
+                </li>
+            </ul>
+        </aside>
+        <div class="content">
+            {%block content%} {%endblock%}
+        </div>
+        <aside id="right-sidebar"> 
+            <div class="statistic">
+                <ul>
+                    <li class="question-count">
+                        <p>Questions</p>
+                        <p><span>18</span></p>
+                    </li>
+                    <li class="member-count">
+                        <p>Members</p>
+                        <p><span>12</span></p>
+                    </li>
+                </ul>
+            </div>
+            <div class="most-used-tags">
+                <h4>MOST USED TAG</h4>
+                <ul class="tags">
+                    <li>
+                        <a class="tag" href="#">business</a> x 6
+                    </li>
+                    <li>
+                        <a class="tag" href="#">technology</a> x 6
+                    </li>
+                </ul>
+            </div>
+        </aside>
+    </section>
+</body>
+</html>

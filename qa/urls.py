@@ -11,5 +11,5 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('dashboard/', views.logged_in, name='dashboard'),
     path('<slug:question>/', views.question_detail, name='question_detail'),
-    path('user/vote/', views.vote, name='vote'),
+    path('user/vote/', views.voting, name='vote'),
 ]

@@ -4,9 +4,9 @@
 <div class="container">
     <div class="question-detail">
         <div class="votes-count">
-            <a href=""><span class="upvote" data-id="{{user.id}}" data-action="upvote"><i class="fas fa-sort-up"></i></span></a>
+            <a href=""><span class="upvote" data-id="{{user.id}}" data-qa="q" data-identity="{{question.slug}}" data-action="upvote"><i class="fas fa-sort-up"></i></span></a>
             {{question.votes}}
-            <a href=""><span class="downvote"><i class="fas fa-sort-down"></i></span></a>
+            <a href=""><span class="downvote" data-id="{{user.id}}" data-qa="q" data-identity="{{question.slug}}" data-action="downvote"><i class="fas fa-sort-down"></i></span></a>
         </div>
         <div class="question-content">
             <p class="question-title py-1">{{ question.title }}</p>
@@ -24,9 +24,9 @@
             {% for answer in answers %}
             <div class="answer-detail my-2">
                 <div class="votes-count">
-                    <a href=""><span class="upvote"><i class="fas fa-sort-up"></i></span></a>
+                    <a href=""><span class="upvote" data-id="{{user.id}}" data-qa="a" data-identity="{{answer.id}}" data-action="upvote"><i class="fas fa-sort-up"></i></span></a>
                     {{answer.votes}}
-                    <a href=""><span class="downvote"><i class="fas fa-sort-down"></i></span></a>
+                    <a href=""><span class="downvote" data-id="{{user.id}}" data-qa="a" data-identity="{{answer.id}}" data-action="downvote"><i class="fas fa-sort-down"></i></span></a>
                 </div>
                 <div class="answer-content">
                     <p class="answer-body">
@@ -65,9 +65,9 @@
 {%block domready %}
     $('span.upvote').click(function(e) {
         e.preventDefault()
-        $.post("{% url 'qa:vote' %}", {id: $(this).data('id'),
+        $.post("{% url 'qa:vote' %}", {id: $(this).data('id'), qa: $(this).data('qa'), identity: $(this).data('identity'),
         action: $(this).data('action')}, function(data) {
-            if (data['status'] == 'ok') {
+            if (data['status'] === 'ok') {
                 alert('ok')
             }
         })

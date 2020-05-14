@@ -78,6 +78,30 @@ def logged_in(request):
 @ajax_required
 @require_POST
 @login_required
-def vote(request):
-    print(request.POST)
-    return JsonResponse({'status':'ok'})
+def voting(request):
+    data = request.POST
+    print(data)
+    if data['action'] == 'upvote':
+        if data['qa'] == 'q':
+            user = get_object_or_404(User, id=data['id'])
+            question = get_object_or_404(Question, slug=data['identity'])
+            res = question.upvote(user)
+        else: 
+            user = get_object_or_404(User, id=data['id'])
+            answer = get_object_or_404(Answer, body=data['identity'])
+            res = answer.upvote(user)
+    else:
+        if data['qa'] == 'q':
+            user = get_object_or_404(User, id=data['id'])
+            question = get_object_or_404(Question, slug=data['identity'])
+            res = question.downvote(user)
+        else: 
+            user = get_object_or_404(User, id=data['id'])
+            answer = get_object_or_404(Answer, body=data['identity'])
+            res = answer.downvote(user)
+    print(res)
+    if res == 'ok':
+        return JsonResponse({'status':'ok'})
+    else: 
+        return JsonResponse({'status':'not ok'})
+

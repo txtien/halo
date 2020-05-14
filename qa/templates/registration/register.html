@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'css/registration.css' %}">
+    <title>Register</title>
+</head>
+
+<body>
+    <h1>Create an account</h1>
+    <p>Please, sign up using the following form:</p>
+    <div class="container">
+        <form method="post">
+            {{ user_form.as_p }}
+            {% csrf_token %}
+            <p><input type="submit" value="Create my account" /></p>
+        </form>
+        <a href="{% url 'qa:home' %}">Homepage</a>
+    </div>
+</body>
+
+</html>

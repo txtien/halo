@@ -1,0 +1,19 @@
+{% extends '../base.html' %}
+
+{% block content %}
+<p class="content-title">All Questions</p>
+<div class="questions">
+    {% for question in questions %}
+    <div class="question gray">
+        <div class="question-content">
+            <a href="{{question.get_absolute_url}}"><h4>{{question.title}}</h4></a>
+            <p>{{question.body|truncatewords:30}}</p>
+        </div>
+        <div class="informations">
+            <p><span>{{question.votes}}</span> votes</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% include "../pagination.html" with page=questions %}
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "../base.html" %}
+
+{% block content %}
+
+<div class="question-detail">
+    <h1 class="question-title py-1">{{ question.title }}</h1>
+    <p class="date py-1">Asked {{question.created}}</p>
+    <p class="question-body py-1">{{ question.body }}</p>
+
+    <div class="answers-block">
+        {% with answers.count as total_answers %}
+        <h4 class="py-1">{{total_answers}} answer{{total_answers|pluralize}}</h4>
+        {% endwith %}
+        <div class="answers my-1">
+            {% for answer in answers %}
+            <div class="answer">
+                <p class="answer-body">
+                    {{answer.body}}
+                </p>
+                <p>Answered on {{answer.created}} by {{answer.user.username}}</p>
+            </div>
+            {% empty %}
+            <p>There is no comments yet</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if new_answer %}
+    <h2>Your answer has been added</h2>
+    {% else %}
+        {% if request.user.is_authenticated %}
+            <h2 class="my-1">Add a new answer</h2>
+            <form action="" method="post" class="answer-form">
+                {{answer_form.as_p}}
+                {% csrf_token %}
+                <p class="my-1"><input type="submit" value="Add answer"></p>
+            </form>
+        {% else %}
+            <p>Please login to answer</p>
+        {% endif %}
+    {% endif %}
+</div>
+
+
+{% endblock %}

@@ -8,12 +8,18 @@ li {
 
 a {
   text-decoration: none;
-  color: #15A4FA
+  color: #15a4fa;
+}
+
+form label {
+  display: inline-block;
+  width: 120px;
 }
 /* LOGIN-FORM */
 
 form input[type="password"],
-form input[type="text"] {
+form input[type="text"],
+form input[type="email"] {
   background-color: #fff;
   border: 1px solid #dadfea;
   padding: 15px 80px;
@@ -25,15 +31,17 @@ form input[type="text"] {
 }
 
 input[type="submit"] {
-    background-color: #39ace7;
-    border: none;
-    padding: 15px 80px;
-    border-radius: 5px;
-    color: white;
-    font-size: 16px;
+  background-color: #39ace7;
+  border: none;
+  padding: 15px 80px;
+  border-radius: 5px;
+  color: white;
+  font-size: 16px;
+  margin: 0 auto;
 }
 
-.error, .errorlist {
+.error,
+.errorlist {
   display: block;
   padding: 10px;
   color: #a94442;
@@ -44,4 +52,3 @@ input[type="submit"] {
   margin: 0 auto;
 }
 
-/* LOGGED-OUT  */

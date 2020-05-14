@@ -36,6 +36,36 @@ a.tag {
   margin-bottom: 5px;
 }
 
+.py-1 {
+  padding: 10px 0;
+}
+
+.py-2 {
+  padding: 20px 0;
+}
+
+.py-3 {
+  padding: 30px 0;
+}
+
+.my-1 {
+  margin: 10px 0;
+}
+
+.my-2 {
+  margin: 20px 0;
+}
+
+.my-3 {
+  margin: 30px 0;
+}
+
+.date {
+  opacity: 0.8;
+  font-size: 12px;
+}
+
+
 /* HEADER */
 
 #header {
@@ -177,3 +207,83 @@ a.tag {
   grid-template-columns: 1fr 3fr 1fr;
 }
 
+/* CONTENT */
+.content .content-title {
+  font-size: 22px;
+  color: #2c3e50;
+  display: block;
+  margin-top: 20px;
+  margin-left: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #dadfea;
+}
+
+.content .questions {
+  display: flex;
+  flex-direction: column;
+}
+
+.content .questions .question {
+  padding: 20px 35px;
+  border-bottom: 1px solid #dadfea;
+  display: flex;
+  justify-content: space-between;
+}
+
+.content .questions .question .informations span {
+  width: 46px;
+  height: 46px;
+  display: block;
+  text-align: center;
+  line-height: 3.3;
+  margin-bottom: 15px;
+  border: 1px solid #d9dfe9;
+  border-radius: 50%;
+}
+
+.content .questions .question:nth-child(2n + 1) {
+  background-color: #fbfcff;
+}
+
+/* PAGINATION */
+.pagination {
+  float: right;
+  margin: 10px;
+}
+
+/* ANSWER */
+.question-detail {
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.question-detail .question-body {
+  border-bottom: 1px solid #dadfea;
+}
+
+.answers-block h4 {
+  border-bottom: 1px solid #dadfea;
+}
+
+.answers .answer:nth-child(2n + 1) {
+  background-color: #fbfcff;
+}
+
+.answer-form p input[type=submit] {
+  height: 45px;
+  border: none;
+  color: #fff;
+  display: block;
+  font-weight: 700;
+  border-radius: 3px;
+  background-color: #3397db;
+  padding: 15px;
+  cursor: pointer;
+}
+
+.answer-form textarea {
+  border: 1px solid #d9dfe9;
+  border-radius: 5px;
+  resize: none;
+  padding: 5px;
+}

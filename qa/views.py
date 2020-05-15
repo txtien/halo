@@ -1,22 +1,35 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import authenticate, login
-from .forms import LoginForm, UserRegistrationForm, AnswerForm
+from .forms import LoginForm, UserRegistrationForm, AnswerForm, QuestionForm, SearchForm
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Question, Answer
+from taggit.models import Tag
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from halo.common.decorators import ajax_required
-
+from django.utils.text import slugify
 
 
 # Create your views here.
-def home(request):
+def home(request, tag_slug=None):
+    search_form = SearchForm()
     user_count = User.objects.count()
     object_list = Question.objects.all()
-    paginator = Paginator(object_list, 5) # 12 questions each page
+    tag = None 
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        object_list = object_list.filter(tags__in=[tag])
+
+    if 'query' in request.GET:
+        search_form = SearchForm(request.GET)
+        if search_form.is_valid():
+            query = search_form.cleaned_data['query']
+            object_list = Question.objects.filter(title__contains=query)
+
+    paginator = Paginator(object_list, 5) # 5 questions each page
     page = request.GET.get('page')
     try: 
         questions = paginator.page(page)
@@ -26,13 +39,15 @@ def home(request):
     except EmptyPage:
         # If page is out of range deliver last page of results
         questions = paginator.page(paginator.num_pages)
-    return render(request, 'extends/home.html', {'user_count': user_count, 'page': page, 'questions': questions})
+
+    return render(request, 'extends/home.html', {'user_count': user_count, 'question_count': Question.objects.count() ,'page': page, 'questions': questions, 'tag': tag, 'search_form': search_form})
+
 
 
 def question_detail(request, question):
     user_count = User.objects.count()
     question = get_object_or_404(Question, slug=question)
-
+    search_form = SearchForm()
     # List of active comments for this post
     answers = question.answers.all()
 
@@ -52,7 +67,7 @@ def question_detail(request, question):
     else:
         answer_form = AnswerForm()
 
-    return render(request, 'extends/detail.html', {'question': question, 'user_count': user_count, 'answers': answers, 'new_answer': new_answer, 'answer_form': answer_form})
+    return render(request, 'extends/detail.html', {'question': question, 'user_count': user_count, 'question_count': Question.objects.count(), 'answers': answers, 'new_answer': new_answer, 'answer_form': answer_form, 'search_form': search_form})
 
 
 def register(request):
@@ -70,17 +85,43 @@ def register(request):
         user_form = UserRegistrationForm()
     return render(request, 'registration/register.html', {'user_form': user_form})
 
+def question_search(request):
+    query = None
+    results = []
+    search_form = SearchForm()
+    user_count = User.objects.count()
+    if 'query' in request.GET:
+        search_form = SearchForm(request.GET)
+        if search_form.is_valid():
+            query = search_form.cleaned_data['query']
+            results = Question.objects.filter(title__contains=query)
+    return render(request, 'extends/home.html', {'user_count': user_count, 'question_count': Question.objects.count() ,'page': page, 'questions': results, 'search_form': search_form})
+
+
 
 @login_required
-def logged_in(request):
-    return render(request, 'extends/dashboard.html')
+def create_question(request):
+    user = get_object_or_404(User, username=request.user.username)
+    new_question = None
+    if request.method == "POST":
+        question_form = QuestionForm(request.POST)
+        if question_form.is_valid():
+            new_question = question_form.save(commit=False)
+            new_question.slug = slugify(new_question.title)
+            new_question.user = user 
+            new_question.save()
+            for tag in question_form.cleaned_data['tags']:
+                new_question.tags.add(tag.lower())
+    else:
+        question_form = QuestionForm()
+    return render(request, 'extends/question.html', {'question_form': question_form, 'user_count': User.objects.count(), 'question_count': Question.objects.count(), 'new_question': new_question})
+
 
 @ajax_required
 @require_POST
 @login_required
 def voting(request):
     data = request.POST
-    print(data)
     if data['action'] == 'upvote':
         if data['qa'] == 'q':
             user = get_object_or_404(User, id=data['id'])
@@ -88,7 +129,7 @@ def voting(request):
             res = question.upvote(user)
         else: 
             user = get_object_or_404(User, id=data['id'])
-            answer = get_object_or_404(Answer, body=data['identity'])
+            answer = get_object_or_404(Answer, id=data['identity'])
             res = answer.upvote(user)
     else:
         if data['qa'] == 'q':
@@ -97,11 +138,9 @@ def voting(request):
             res = question.downvote(user)
         else: 
             user = get_object_or_404(User, id=data['id'])
-            answer = get_object_or_404(Answer, body=data['identity'])
+            answer = get_object_or_404(Answer, id=data['identity'])
             res = answer.downvote(user)
-    print(res)
-    if res == 'ok':
-        return JsonResponse({'status':'ok'})
-    else: 
-        return JsonResponse({'status':'not ok'})
+   
+    return JsonResponse({'status': res})
+ 
 

@@ -4,12 +4,17 @@
 <div class="container">
     <div class="question-detail">
         <div class="votes-count">
-            <a href=""><span class="upvote" data-id="{{user.id}}" data-qa="q" data-identity="{{question.slug}}" data-action="upvote"><i class="fas fa-sort-up"></i></span></a>
+            <a href="" class="popup"><span class="upvote" data-id="{{user.id}}" data-qa="q" data-identity="{{question.slug}}" data-action="upvote"><i class="fas fa-sort-up"></i></span></a>
             {{question.votes}}
-            <a href=""><span class="downvote" data-id="{{user.id}}" data-qa="q" data-identity="{{question.slug}}" data-action="downvote"><i class="fas fa-sort-down"></i></span></a>
+            <a href="" class="popup"><span class="downvote" data-id="{{user.id}}" data-qa="q" data-identity="{{question.slug}}" data-action="downvote"><i class="fas fa-sort-down"></i></span></a>
         </div>
         <div class="question-content">
-            <p class="question-title py-1">{{ question.title }}</p>
+            <p class="question-title py-1">
+                {{ question.title }}
+                {% for tag in question.tags.all %}
+                <a href="{% url 'qa:question_by_tag' tag.slug %}" class="tag">{{tag.name}}</a>
+                {% endfor %}
+            </p>
             <p class="date">Asked by {{question.user.username}} at {{question.created}}</p>
             <p class="question-body py-1">{{ question.body }}</p>
         </div>
@@ -24,20 +29,20 @@
             {% for answer in answers %}
             <div class="answer-detail my-2">
                 <div class="votes-count">
-                    <a href=""><span class="upvote" data-id="{{user.id}}" data-qa="a" data-identity="{{answer.id}}" data-action="upvote"><i class="fas fa-sort-up"></i></span></a>
+                    <a href="" class="popup"><span class="upvote" data-id="{{user.id}}" data-qa="a" data-identity="{{answer.id}}" data-action="upvote"><i class="fas fa-sort-up"></i></span></a>
                     {{answer.votes}}
-                    <a href=""><span class="downvote" data-id="{{user.id}}" data-qa="a" data-identity="{{answer.id}}" data-action="downvote"><i class="fas fa-sort-down"></i></span></a>
+                    <a href="" class="popup"><span class="downvote" data-id="{{user.id}}" data-qa="a" data-identity="{{answer.id}}" data-action="downvote"><i class="fas fa-sort-down"></i></span></a>
                 </div>
                 <div class="answer-content">
                     <p class="answer-body">
                         {{answer.body}}
                     </p>
-                    <p>Answered on {{answer.created}} by {{answer.user.username}}</p>
+                    <p class="date my-2">Answered on {{answer.created}} by {{answer.user.username}}</p>
                 </div>
             </div>
             <hr>
             {% empty %}
-            <p>There is no comments yet</p>
+            <p>There is no answer yet</p>
             {% endfor %}
             
         </div>
@@ -62,15 +67,56 @@
 {% endblock %}
 
 {% block script %}
-{%block domready %}
-    $('span.upvote').click(function(e) {
-        e.preventDefault()
-        $.post("{% url 'qa:vote' %}", {id: $(this).data('id'), qa: $(this).data('qa'), identity: $(this).data('identity'),
-        action: $(this).data('action')}, function(data) {
-            if (data['status'] === 'ok') {
-                alert('ok')
-            }
+    {%block domready %}
+        $('span.upvote, span.downvote').off().click(function(e) {
+            e.preventDefault()
+            $.ajax({
+                url: "{% url 'qa:vote' %}",
+                type: "post",
+                data: {id: $(this).data('id'), qa: $(this).data('qa'), identity: $(this).data('identity'),
+                action: $(this).data('action')},
+                dataType: "json",
+                success: function(data){
+                    console.log(data)
+                    let status = data['status']
+                    popUpFunction(e.target.parentNode, status)
+                },
+                error: function(){
+                    popUpFunction(e.target.parentNode, 'login')
+                }
+            })
         })
-    })
+
+    {% endblock %}
+    function popUpFunction(element, status){
+        <!-- Get vote element -->
+        let vote = element;
+    
+        <!-- Create span text to notify user -->
+        let popuptext = document.createElement('span')
+        let class_ = document.createAttribute('class')
+        class_.value = "popuptext"
+        let id_ = document.createAttribute('id')
+        id_.value = "myPopup"
+        popuptext.setAttributeNode(class_)
+        popuptext.setAttributeNode(id_)
+        if (status === 'ok'){
+            popuptext.textContent = "Thanks you for voting!"
+        } else if (status === 'Already upvotes'){
+            popuptext.textContent = "You've already voted :)"
+        } else {
+            popuptext.innerHTML = "Please login to votes!"
+        }
+        popuptext.classList.toggle("show");
+
+        <!-- Append Child -->
+        vote.appendChild(popuptext)
+
+        <!-- Remove Child after 2.5s -->
+        setTimeout(function() {
+            vote.removeChild(popuptext);
+        }, 2500)
+    }
 {% endblock %}
-{% endblock %}
+
+let popup = document.createElement('span')

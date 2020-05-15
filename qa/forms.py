@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Answer
+from .models import Answer, Question
+from taggit.models import Tag
 
 
 class LoginForm(forms.Form):
@@ -35,3 +36,14 @@ class AnswerForm(forms.ModelForm):
             'body': ""
         }
         
+class QuestionForm(forms.ModelForm):
+    class Meta:
+        model = Question
+        fields = ('title', 'body', 'tags')
+        labels = {
+            'body': 'Content'
+        }
+
+class SearchForm(forms.Form):
+    query = forms.CharField(label="", widget=forms.TextInput(attrs={'placeholder': 'Enter Keywords'}))
+    

@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'vote',
+    'taggit',
+    'taggit_templatetags2',
 ]
 
 MIDDLEWARE = [
@@ -122,5 +123,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 LOGIN_REDIRECT_URL = 'qa:home'
-LOGIN_URL = 'login'
-LOGOUT_URL = 'logout'
+LOGIN_URL = 'qa:login'
+LOGOUT_URL = 'qa:logout'

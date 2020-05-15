@@ -1,8 +1,8 @@
 from django.db import models
-from vote.models import VoteModel
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.db import IntegrityError
+from taggit.managers import TaggableManager
 # Create your models here.
 
 
@@ -15,6 +15,7 @@ class Question(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     votes = models.IntegerField(default=0)
+    tags = TaggableManager()
 
     class Meta:
         ordering = ('-created',)
@@ -29,7 +30,7 @@ class Question(models.Model):
         try:
             self.question_vote.create(user=user, question=self, vote_type='up')
             self.votes += 1
-            self.save()
+            self.save(update_fields=['votes'])
         except IntegrityError:
             return "Already upvotes"
         return 'ok'
@@ -39,7 +40,7 @@ class Question(models.Model):
             self.question_vote.create(
                 user=user, question=self, vote_type='down')
             self.votes -= 1
-            self.save()
+            self.save(update_fields=['votes'])
         except IntegrityError:
             return "Already downvotes"
         return 'ok'
@@ -65,7 +66,7 @@ class Answer(models.Model):
         try:
             self.answer_vote.create(user=user, answer=self, vote_type='up')
             self.votes += 1
-            self.save()
+            self.save(update_fields=['votes'])
         except IntegrityError:
             return "Already upvotes"
         return 'ok'
@@ -74,16 +75,24 @@ class Answer(models.Model):
         try:
             self.answer_vote.create(user=user, answer=self, vote_type='down')
             self.votes -= 1
-            self.save()
+            self.save(update_fields=['votes'])
         except IntegrityError:
             return "Already downvotes"
         return 'ok'
     
-class UserVotes(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_vote')
+class UserVoteQuestion(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_vote_question')
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='question_vote')
+    vote_type = models.CharField(max_length=10)
+
+    class Meta:
+        unique_together = ('user', 'question', 'vote_type')
+
+
+class UserVoteAnswer(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_vote_answer')
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, related_name='answer_vote')
     vote_type = models.CharField(max_length=10)
 
     class Meta:
-        unique_together = ('user', 'question', 'answer', 'vote_type')
+        unique_together = ('user', 'answer', 'vote_type')

@@ -1,4 +1,6 @@
 {% load static %}
+{% load taggit_templatetags2_tags %}
+{% get_taglist as tags for 'qa.Question' %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/f5f81da170.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/f5f81da170.js" async crossorigin="anonymous"></script>
     <title>QA</title>
 </head>
 
@@ -19,14 +21,16 @@
             </a>
         </div>
         <div class="search-bar">
-            <input type="text" placeholder="Enter Keywords">
+            <form method="get">
+                {{search_form.as_p}}
+                {% csrf_token %}
+            </form>
             <i class="fas fa-search"></i>
         </div>
         <div class="navigation">
             <ul>
                 {% if request.user.is_authenticated %}
                 <li style="color: #15A4FA">Hello {{request.user.first_name}}</li>
-                <li><a href="{% url 'qa:dashboard' %}">Dashboard</a></li>
                 <li><a href="{% url 'qa:logout' %}">Logout</a></li>
                 {% else %}
                 <li><a href="{% url 'qa:login' %}">Login</a></li>
@@ -39,20 +43,13 @@
         <aside id="left-sidebar">
             <ul>
                 <li class="btn">
-                    {% if request.user.is_authenticated %}
-                    <a href="#"><button class="ask-question"><i class="fas fa-plus"></i> ASK A QUESTION</button></a>
-                    {%else%}
-                    <a href="{% url 'qa:login' %}"><button class="ask-question"><i class="fas fa-plus"></i> ASK A
-                            QUESTION</button></a>
-                    {%endif%}
+                    <a href="{% url 'qa:new_question' %}"><button class="ask-question"><i class="fas fa-plus"></i> ASK A QUESTION</button></a>
                 </li>
+                <h3 class="my-1">Tags:</h3>
                 <li class="tags">
-                    <a class="tag" href="">business</a>
-                    <a class="tag" href="">technology</a>
-                    <a class="tag" href="">business</a>
-                    <a class="tag" href="">technology</a>
-                    <a class="tag" href="">business</a>
-                    <a class="tag" href="">technology</a>
+                    {% for tag in tags %}
+                    <a class="tag" href="{% url 'qa:question_by_tag' tag.slug %}">{{tag}}</a>
+                    {%endfor%}
                 </li>
             </ul>
         </aside>
@@ -64,7 +61,7 @@
                 <ul>
                     <li class="question-count">
                         <p>Questions</p>
-                        <p><span>18</span></p>
+                        <p><span>{{question_count}}</span></p>
                     </li>
                     <li class="member-count">
                         <p>Members</p>
@@ -75,12 +72,11 @@
             <div class="most-used-tags">
                 <h4>MOST USED TAG</h4>
                 <ul class="tags">
-                    <li>
-                        <a class="tag" href="#">business</a> x 6
-                    </li>
-                    <li>
-                        <a class="tag" href="#">technology</a> x 6
-                    </li>
+                        {% for tag in tags %}
+                        <li>
+                            <a class="tag" href="{% url 'qa:question_by_tag' tag.slug %}">{{tag}}</a> x {{tag.num_times}}
+                        </li>
+                        {% endfor %}
                 </ul>
             </div>
         </aside>
@@ -106,9 +102,9 @@ js.cookie.min.js"></script>
             {% block domready %}
             {% endblock %}
         });
+        {% block script %} {% endblock %}
     </script>
-
-    {% block script %} {% endblock %}
+    
 </body>
 
 </html>

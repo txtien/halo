@@ -6,11 +6,15 @@
     {% for question in questions %}
     <div class="question">
         <div class="question-content">
-            <a href="{{question.get_absolute_url}}"><h4>{{question.title}}</h4></a>
-            <p>{{question.body|truncatewords:30}}</p>
+            <a  href="{{question.get_absolute_url}}"><h4>{{question.title}}</h4></a>
+            <p class="my-2">{{question.body|truncatewords:30}}</p>
+            {% for tag in question.tags.all %}
+            <a href="{% url 'qa:question_by_tag' tag.slug %}" class="tag">{{tag.name}}</a>
+            {%endfor%}
         </div>
         <div class="informations">
-            <p><span>{{question.votes}}</span> votes</p>
+            <p><span>{{question.votes}}</span> vote{{question.votes|pluralize}}</p>
+            <p><span style="background-color: #1ABC9C !important; color: #fff;">{{question.answers.count}}</span> answer{{question.answers.count|pluralize}}</p>
         </div>
     </div>
     {% endfor %}

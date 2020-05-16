@@ -15,5 +15,8 @@ WORKDIR /qaengine
 # Copy the current directory contents into the container at /qaengine
 ADD . /qaengine/
 
+
 # Install any needed packages specified in requirements.txt
 RUN pip install -r requirements.txt
+
+CMD python manage.py runserver 0.0.0.0:8000

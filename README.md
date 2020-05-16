@@ -1,4 +1,4 @@
-Command:
+Command:  
 docker pull txtien94/halo  
 docker run -p 8000:8000 txtien94/halo
 

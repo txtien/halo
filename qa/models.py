@@ -24,6 +24,7 @@ class Question(models.Model):
         return self.title
 
     def get_absolute_url(self):
+        # Send argument to question_detail route
         return reverse('qa:question_detail', args=[self.slug])
 
     def upvote(self, user):

@@ -18,11 +18,14 @@ def home(request, tag_slug=None):
     search_form = SearchForm()
     user_count = User.objects.count()
     object_list = Question.objects.all()
+
+    # Handle tag filter
     tag = None 
     if tag_slug:
         tag = get_object_or_404(Tag, slug=tag_slug)
         object_list = object_list.filter(tags__in=[tag])
 
+    # Handle search function
     if 'query' in request.GET:
         search_form = SearchForm(request.GET)
         if search_form.is_valid():
@@ -45,14 +48,16 @@ def home(request, tag_slug=None):
 
 
 def question_detail(request, question):
+    # Render question detail view
     user_count = User.objects.count()
     question = get_object_or_404(Question, slug=question)
     search_form = SearchForm()
-    # List of active comments for this post
+    # List of active answers for this post
     answers = question.answers.all()
 
     new_answer = None
 
+    # Handle user's answer
     if request.method == "POST":
         answer_form = AnswerForm(request.POST)
         if answer_form.is_valid():
@@ -62,7 +67,7 @@ def question_detail(request, question):
             new_answer.question = question
             # Assign user to the answer
             new_answer.user = get_object_or_404(User, username=request.user.username)
-            # Save the comment to the database
+            # Save the answer to the database
             new_answer.save()
     else:
         answer_form = AnswerForm()
@@ -84,19 +89,6 @@ def register(request):
     else:
         user_form = UserRegistrationForm()
     return render(request, 'registration/register.html', {'user_form': user_form})
-
-def question_search(request):
-    query = None
-    results = []
-    search_form = SearchForm()
-    user_count = User.objects.count()
-    if 'query' in request.GET:
-        search_form = SearchForm(request.GET)
-        if search_form.is_valid():
-            query = search_form.cleaned_data['query']
-            results = Question.objects.filter(title__contains=query)
-    return render(request, 'extends/home.html', {'user_count': user_count, 'question_count': Question.objects.count() ,'page': page, 'questions': results, 'search_form': search_form})
-
 
 
 @login_required

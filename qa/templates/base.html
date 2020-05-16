@@ -21,7 +21,7 @@
             </a>
         </div>
         <div class="search-bar">
-            <form method="get">
+            <form method="get" action="{% url 'qa:home' %}">
                 {{search_form.as_p}}
                 {% csrf_token %}
             </form>

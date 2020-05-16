@@ -13,5 +13,4 @@ urlpatterns = [
     path('<slug:question>/', views.question_detail, name='question_detail'),
     path('tag/<slug:tag_slug>', views.home, name="question_by_tag"),
     path('user/vote/', views.voting, name='vote'),
-
 ]

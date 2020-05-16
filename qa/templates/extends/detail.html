@@ -1,6 +1,7 @@
 {% extends "../base.html" %}
 
 {% block content %}
+<!-- Question detail -->
 <div class="container">
     <div class="question-detail">
         <div class="votes-count">
@@ -20,7 +21,7 @@
         </div>
     </div>
 
-
+    <!-- Render number of total answers and answers-->
     <div class="answers-block">
         {% with answers.count as total_answers %}
         <h4 class="py-1">{{total_answers}} answer{{total_answers|pluralize}}</h4>
@@ -48,19 +49,20 @@
         </div>
     </div>
 
+    <!-- Render answer form, if user has answered, notify them that answer has been added -->
     {% if new_answer %}
-    <h2>Your answer has been added</h2>
+        <h2>Your answer has been added</h2>
     {% else %}
-    {% if request.user.is_authenticated %}
-    <h2 class="my-1">Add a new answer</h2>
-    <form action="" method="post" class="answer-form">
-        {{answer_form.as_p}}
-        {% csrf_token %}
-        <p class="my-1"><input type="submit" value="Add answer"></p>
-    </form>
-    {% else %}
-    <p>Please login to answer</p>
-    {% endif %}
+        {% if request.user.is_authenticated %}
+            <h2 class="my-1">Add a new answer</h2>
+            <form action="" method="post" class="answer-form">
+                {{answer_form.as_p}}
+                {% csrf_token %}
+                <p class="my-1"><input type="submit" value="Add answer"></p>
+            </form>
+        {% else %}
+            <p>Please login to answer</p>
+        {% endif %}
     {% endif %}
 </div>
 
@@ -77,7 +79,6 @@
                 action: $(this).data('action')},
                 dataType: "json",
                 success: function(data){
-                    console.log(data)
                     let status = data['status']
                     popUpFunction(e.target.parentNode, status)
                 },
@@ -94,12 +95,15 @@
     
         <!-- Create span text to notify user -->
         let popuptext = document.createElement('span')
+        <!-- Create attributes and set it into span element -->
         let class_ = document.createAttribute('class')
         class_.value = "popuptext"
         let id_ = document.createAttribute('id')
         id_.value = "myPopup"
         popuptext.setAttributeNode(class_)
         popuptext.setAttributeNode(id_)
+
+        <!-- Notify text to user -->
         if (status === 'ok'){
             popuptext.textContent = "Thanks you for voting!"
         } else if (status === 'Already upvotes'){
@@ -109,14 +113,13 @@
         }
         popuptext.classList.toggle("show");
 
-        <!-- Append Child -->
+        <!-- Append span to vote  -->
         vote.appendChild(popuptext)
 
-        <!-- Remove Child after 2.5s -->
+        <!-- Remove Child and reload after 2s -->
         setTimeout(function() {
             vote.removeChild(popuptext);
-        }, 2500)
+            location.reload();
+        }, 2000)
     }
 {% endblock %}
-
-let popup = document.createElement('span')

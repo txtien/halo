@@ -1,6 +1,7 @@
 {% extends '../base.html' %}
 
 {% block content %}
+<!-- Render "create question" form, if user has created question, notify them -->
 {% if new_question %}
     <h2>Your question has been created! Go back to <a href="{% url 'qa:home' %}">homepage</a></h2>
 {%else%}
